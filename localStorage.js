@@ -34,6 +34,9 @@ function getPopUp(id, template) {
             contentElement.find(".pic").attr("src", data.pic);
             contentElement.find(".title").text(data.Title);
             contentElement.find(".submit-button").attr("data-id", data.id).button();
+            if (data.Type != 'Vacant') {
+            	contentElement.find(".submit-button").css('display', 'none');
+            }
             contentElement.find(".description").text(data.Description);
             return contentElement.html();
 		}
