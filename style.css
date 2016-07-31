@@ -114,3 +114,8 @@
             border: 0;
             padding: 0;
         }
+
+#applyForm {
+      //background: #444;
+    background: rgba(255,255,255,.8);
+}

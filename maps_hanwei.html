@@ -412,6 +412,27 @@
     <!--<script src="google-maps-3-vs-1-0.js"></script>-->
     <!--<script src="google-maps-3-vs-1-0-vsdoc.js"></script>-->
 
+    <div class="hidden">
+        <script type="text/javascript">
+		<!--//--><![CDATA[//><!--
+            var images = new Array();
+            var artimages = new Array();
+			function preload() {
+				for (var i = 0; i < pos.length; i++) {
+				    images[i] = new Image();
+				    images[i].src = pos[i].pic;
+				}
+				for (var i = 0; i < artistAry.length; i++) {
+				    artimages[i] = new Image();
+				    artimages[i].src = artistAry[i].pic;
+				}
+			}
+			
+		//--><!]]>
+        </script>
+    </div>
+
+
 
 </body>
 </html>

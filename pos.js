@@ -214,12 +214,12 @@
 ];
 
 var artistAry = [
-{ id: 36, Name: 'RONE', ContactEmail: 'contact@r-o-n-e.com', Website: 'http://r-o-n-e.com/', Description: 'Famous for his sumptuous paintings of glamorous women, stuff in particular an often recurring image of his so-called Jane Doe, diagnosis Rone’s work attempts to locate the friction point between beauty and decay, the lavish and despoiled, creating an iconic form of urban art with a strongly emotional bent.' },
-{ id: 16, Name: 'Vans The Omega', ContactEmail: '', Website: 'vanstheomega.com', Description: '' },
-{ id: 13, Name: 'Lisa King', ContactEmail: '', Website: '', Description: 'A self-taught artist who has a history in arguably the more traditional meudims of work.' },
-{ id: 0, Name: 'Kab101', ContactEmail: '', Website: '', Description: 'This gentleman has a laneway in prospect named after him.' },
-{ id: 1, Name: 'Matt Stuckey', ContactEmail: '', Website: 'http://befriendly.net/', Description: 'Owner of multi-disciplinary creative agency Befreindly' },
-{ id: 27, Name: 'Adnate', ContactEmail: '', Website: '', Description: 'The massive scale of his portraints draw from an appreciation of the chiaroscuro from renaissance painters like Caravaggio.' }
+{ id: 36, Name: 'RONE', pic: "https://googledrive.com/host/0B7suR6B1lMOaNjBaZGtjaVF6OTA/RONE.jpg", ContactEmail: 'contact@r-o-n-e.com', Website: 'http://r-o-n-e.com/', Description: 'Famous for his sumptuous paintings of glamorous women, stuff in particular an often recurring image of his so-called Jane Doe, diagnosis Rone’s work attempts to locate the friction point between beauty and decay, the lavish and despoiled, creating an iconic form of urban art with a strongly emotional bent.' },
+{ id: 16, Name: 'Vans The Omega', pic: "https://googledrive.com/host/0B7suR6B1lMOaNjBaZGtjaVF6OTA/Vans the Omega.jpg", ContactEmail: '', Website: 'vanstheomega.com', Description: 'As one of Australia’s most influential street artists, Vans the Omega is often credited as a pioneer of both the local and international graffiti scene. However, despite his godfather status within the industry, Vans is an extremely grounded person.' },
+{ id: 13, Name: 'Lisa King', pic: "https://googledrive.com/host/0B7suR6B1lMOaNjBaZGtjaVF6OTA/RONE.jpg", ContactEmail: '', Website: '', Description: 'A self-taught artist who has a history in arguably the more traditional meudims of work.' },
+{ id: 0, Name: 'Kab101', pic: "https://googledrive.com/host/0B7suR6B1lMOaNjBaZGtjaVF6OTA/lisaking.jpg", ContactEmail: '', Website: '', Description: 'This gentleman has a laneway in prospect named after him.' },
+{ id: 1, Name: 'Matt Stuckey', pic: "https://googledrive.com/host/0B7suR6B1lMOaNjBaZGtjaVF6OTA/MattStuckey.jpg", ContactEmail: '', Website: 'http://befriendly.net/', Description: 'Owner of multi-disciplinary creative agency Befreindly' },
+{ id: 27, Name: 'Adnate', pic: "https://googledrive.com/host/0B7suR6B1lMOaNjBaZGtjaVF6OTA/RONE.jpg", ContactEmail: '', Website: '', Description: 'The massive scale of his portraints draw from an appreciation of the chiaroscuro from renaissance painters like Caravaggio.' }
 ];
 
 

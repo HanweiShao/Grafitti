@@ -56,12 +56,33 @@ function getApplicationList() {
 $(document).ready( function() {
 	$(document).on("click", ".submit-button", function(){
 		var id = $(this).data('id');
-		var template = '<div title="Painting Application"> \
-		    Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="artistName" type="text"><br /> \
-		    Email:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="artistEmail" type="text"><br /> \
-		    Phone Number:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="artistPhone" type="text"> <br /> \
-		    Concept Description:&nbsp;<textarea id="artistConcept" rows="3" cols="30" /> \
-			</div>';
+		//var template = '<div id="applyForm" title="Painting Application"> \
+		//    Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="artistName" type="text"><br /> \
+		//    Email:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="artistEmail" type="text"><br /> \
+		//    Phone Number:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="artistPhone" type="text"> <br /> \
+		//    Concept Description:&nbsp;<textarea id="artistConcept" rows="3" cols="30" /> \
+		//	</div>';
+		var template = '<div id="applyForm" title="Painting Application"> \
+ <table>\
+            <tr>\
+                <td>Name:</td>\
+                <td><input id="artistName" type="text"></td>\
+            </tr>\
+            <tr>\
+                <td>Email:</td>\
+                <td><input id="artistEmail" type="text"></td>\
+            </tr>\
+            <tr>\
+                <td>Phone Number:</td>\
+                <td><input id="artistPhone" type="text"></td>\
+            </tr>\
+            <tr>\
+                <td>Concept Description:</td>   \
+                <td><textarea id="artistConcept" rows="3" cols="30" />\
+            </tr>\
+        </table>\
+		</div>';
+
 		dialog = $(template).dialog({
 	      height: 320,
 	      width: 500,
