@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src="jquery-ui.min.js"></script>
-    <script src="pos.js"></script>
+    <script src="localStorage.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link rel="stylesheet" type="text/css" href="jquery-ui.min.css">
     <style>
@@ -131,28 +131,16 @@
 
 
     <script>
-
+    
         var map;
         var markers = [];
 
-        //HTML template for infowindow content
-        var template = ' \
-    <div id="contentTemplate"> \
-        <p><img id="pic" src="" /></p> \
-        <p id="title" style="font-weight:bold"></p> \
-        <p id="description"></p> \
-    </div>        \
-        ';
-
         $(function () {
             $("#displayType").selectmenu().selectmenu("menuWidget");
-            $("#display").button();
-            $("#close").button();
-
         });
 
         function initMap() {
-            console.log("pos length:" + pos.length);
+            console.log("pos length:" + getMapData().length);
 
             //Map object
             map = new google.maps.Map(document.getElementById('map'), {
@@ -167,7 +155,7 @@
             map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById('filterDiv'));
             map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('sideList'));
 
-
+            
             // Get current location
             // Try HTML5 geolocation.
             if (navigator.geolocation) {
@@ -209,18 +197,12 @@
 
             //=====================================================
             // Create marker for each position
-            for (var i = 0; i < pos.length; i++) {
-                if (pos[i].Type != "Hotspot")
-                    addMarkerWithTimeout(pos[i], i * 200);
+            for (var i = 0; i < getMapData().length; i++) {
+                if (getMapData()[i].Type != "Hotspot")
+                    addMarkerWithTimeout(getMapData()[i], i * 200);
             }
             function addMarkerWithTimeout(position, timeout) {
                 window.setTimeout(function () {
-
-                    //Infowindow content
-                    var contentElement = $(template);
-                    contentElement.find("#pic").attr("src", position.pic);
-                    contentElement.find("#title").text(position.Title);
-                    contentElement.find("#description").text(position.Description);
 
                     var iconSrc = "https://googledrive.com/host/0B9BzW-EySLXrRlJzNm1mMEZGWms/pin";
                     if (position.Type == "Existing")
@@ -235,7 +217,7 @@
                         map: map,
                         animation: google.maps.Animation.DROP,
                         icon: iconSrc,
-                        infoContent: contentElement.html(),
+                        infoContent: getPopUp(position.id),
                         avai: position.Type
                     })
 
@@ -246,7 +228,7 @@
                     //Open infowindow using marker.infoContent
                     google.maps.event.addListener(marker, 'click', (function (marker, i) {
                         return function () {
-                            infowindow.setContent(marker.infoContent);
+                            infowindow.setContent(getPopUp(position.id));
                             infowindow.open(map, marker);
                         }
                     })(marker, i));
@@ -322,33 +304,26 @@
         //Add items for the left list
         function displayList() {
 
-            //$("#display").text(function (i, text) {
-            //    return text === "Display" ? "Close" : "Display";
-            //});
+            $("#display").text(function (i, text) {
+                return text === "Display" ? "Close" : "Display";
+            });
             $("#listResult").html('');
-            $("#listResult").slideDown("slow");
+            $("#listResult").slideToggle("slow");
 
             var displayType = $("#displayType").val();
-            for (var i = 0; i < pos.length; i++) {
-                if (pos[i].Type == "Existing") {
+            for (var i = 0; i < getMapData().length; i++) {
+                if (getMapData()[i].Type == "Existing") {
                     var element = $('    \
     <div id="displayItem" style="vertical-align:middle"> \
-        <div id="bloc1" style="display:inline-table;vertical-align:middle"><img style="width:80px" src="' + pos[i].pic + '"></div>\
-        <div id="bloc2" style="display:inline-table;vertical-align:middle;padding-left:10px;"><p><b>' + pos[i].Title + '</b></p><p>' + pos[i].Description + '</p></div> \
+        <div id="bloc1" style="display:inline-table;vertical-align:middle"><img style="width:80px" src="' + getMapData()[i].pic + '"></div>\
+        <div id="bloc2" style="display:inline-table;vertical-align:middle;padding-left:10px;"><p><b>' + getMapData()[i].Title + '</b></p><p>' + getMapData()[i].Description + '</p></div> \
     </div> \
             ');
                     $("#listResult").append(element);
                 }
             }
         }
-
-        function cLoseList()
-        {
-            $("#listResult").html('');
-            $("#listResult").slideUp('slow');
-        }
         // End  function displayList()
-
 
 
     </script>
