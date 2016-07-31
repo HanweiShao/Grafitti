@@ -110,6 +110,7 @@
             <select id="displayType" style="font-size:14px; ">
                 <option value="Grafitti">Grafitti</option>
                 <option value="Artist">Artist</option>
+                <option value="Applications">Applications</option>
             </select>
             <button type="button" id="display" onclick="displayList();">Display</button> 
             <button type="button" id="close" onclick="closeList();">&#10006;</button>
@@ -208,6 +209,12 @@
             function addMarkerWithTimeout(position, timeout) {
                 window.setTimeout(function () {
 
+                    var template = '<div id="contentTemplate"> \
+                            <p><img class="pic" src="" /></p> \
+                            <p class="title" style="font-weight:bold"></p> \
+                            <p class="description"></p> \
+                            <a href="#" class="submit-button" class="submit-button">submit application</a> \
+                            </div>';
                     var iconSrc = "https://googledrive.com/host/0B9BzW-EySLXrRlJzNm1mMEZGWms/pin";
                     if (position.Type == "Existing")
                         iconSrc += "R.png";
@@ -221,7 +228,7 @@
                         map: map,
                         animation: google.maps.Animation.DROP,
                         icon: iconSrc,
-                        infoContent: getPopUp(position.id),
+                        infoContent: getPopUp(position.id, template),
                         avai: position.Type
                     })
 
@@ -232,7 +239,7 @@
                     //Open infowindow using marker.infoContent
                     google.maps.event.addListener(marker, 'click', (function (marker, i) {
                         return function () {
-                            infowindow.setContent(getPopUp(position.id));
+                            infowindow.setContent(getPopUp(position.id, template));
                             infowindow.open(map, marker);
                         }
                     })(marker, i));
