@@ -139,6 +139,13 @@
         var markers = [];
         var infowindow;
 
+        var template = '<div id="contentTemplate"> \
+                            <p><img class="pic" src="" /></p> \
+                            <p class="title" style="font-weight:bold"></p> \
+                            <p class="description"></p> \
+                            <a href="#" class="submit-button" class="submit-button">submit application</a> \
+                            </div>';
+
         $(function () {
             $("#displayType").selectmenu().selectmenu("menuWidget");
             $("#display").button();
@@ -212,12 +219,6 @@
             function addMarkerWithTimeout(position, timeout) {
                 window.setTimeout(function () {
 
-                    var template = '<div id="contentTemplate"> \
-                            <p><img class="pic" src="" /></p> \
-                            <p class="title" style="font-weight:bold"></p> \
-                            <p class="description"></p> \
-                            <a href="#" class="submit-button" class="submit-button">submit application</a> \
-                            </div>';
                     var iconSrc = "https://googledrive.com/host/0B9BzW-EySLXrRlJzNm1mMEZGWms/pin";
                     var mapOn = map;
                     if (position.Type == "Existing") {
@@ -402,7 +403,7 @@
         {
             for (i = 0; i < markers.length; i++) {
                 if (markers[i].posId == posId) {
-                    infowindow.setContent(getPopUp(posId));
+                    infowindow.setContent(getPopUp(posId, template));
                     infowindow.open(map, markers[i]);
                 }
             }
