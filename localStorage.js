@@ -42,6 +42,7 @@ function getPopUp(id, template) {
 }
 
 function getApplicationList() {
+	$("#listResult").html('');
     for (var i = 0; i < getApplications().length; i++) {
     	var application = getApplications()[i];
     	var template = '<div><div id="displayItem" style="vertical-align:middle"> \
