@@ -42,13 +42,19 @@ function getPopUp(id, template) {
 }
 
 function getApplicationList() {
-	var template = '<div id="displayItem" style="vertical-align:middle"> \
-        <div id="bloc1" style="display:inline-table;vertical-align:middle"><img style="width:80px" class="pic" src=""><br /><b class="title"></b></div>\
-        <div id="bloc2" style="display:inline-table;vertical-align:middle;padding-left:10px;"><p><b class="artistName"></b><br />e: <span class="artistEmail"></span><br />p: <span class="artistPhone"></span><br /><br /><span class="artistConcept"></span></p> \
-    </div>';
     for (var i = 0; i < getApplications().length; i++) {
     	var application = getApplications()[i];
-		$("#listResult").append(element);
+    	var template = '<div><div id="displayItem" style="vertical-align:middle"> \
+	        <div id="bloc1" style="display:inline-table;vertical-align:middle"><img style="width:80px" class="pic" src=""><br /><b class="title"></b></div>\
+	        <div id="bloc2" style="display:inline-table;vertical-align:middle;padding-left:10px;"><p><b class="artistName"></b><br />e: <span class="artistEmail"></span><br />p: <span class="artistPhone"></span><br /><br /><span class="artistConcept"></span></p></div> \
+	    </div></div>';
+    	template = getPopUp(application.id, template);
+    	var contentElement = $(template);
+    	contentElement.find(".artistName").text(application.name);
+        contentElement.find(".artistEmail").text(application.email);
+        contentElement.find(".artistPhone").text(application.phone);
+        contentElement.find(".artistConcept").text(application.concept);
+		$("#listResult").append(contentElement[0].outerHTML);
 	}
 
 }
