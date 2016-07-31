@@ -47,7 +47,7 @@ function getApplicationList() {
     	var application = getApplications()[i];
     	var template = '<div><div id="displayItem" style="vertical-align:middle"> \
 	        <div id="bloc1" style="display:inline-table;vertical-align:middle"><img style="width:80px" class="pic" src=""><br /><b class="title"></b></div>\
-	        <div id="bloc2" style="display:inline-table;vertical-align:middle;padding-left:10px;"><p><b class="artistName"></b><br />e: <span class="artistEmail"></span><br />p: <span class="artistPhone"></span><br /><br /><span class="artistConcept"></span></p></div> \
+	        <div id="bloc2" style="display:inline-table;vertical-align:middle;padding-left:10px;"><p><b class="artistName"></b><br />e: <span class="artistEmail"></span><br />p: <span class="artistPhone"></span><br /><br /><span style="display:none;" class="artistConcept"></span></p></div> \
 	    </div></div>';
     	template = getPopUp(application.id, template);
     	var contentElement = $(template);
