@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Simple Map</title>
+    <title>Splash! Gragitti Map</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
@@ -112,7 +112,7 @@
                 <option value="Artist">Artist</option>
             </select>
             <button type="button" id="display" onclick="displayList();">Display</button> 
-            <button type="button" id="close" onclick="cLoseList();">&#10006;</button>
+            <button type="button" id="close" onclick="closeList();">&#10006;</button>
         </div>        
         <div style="padding:20px 20px 0 0;">
             <div id="listResult" style="height:500px; width:350px; overflow:scroll; overflow-x:auto; float:right; display:none ">
@@ -138,6 +138,9 @@
 
         $(function () {
             $("#displayType").selectmenu().selectmenu("menuWidget");
+            $("#display").button();
+            $("#close").button();
+
         });
 
         function initMap() {
@@ -305,24 +308,30 @@
         //Add items for the left list
         function displayList() {
 
-            $("#display").text(function (i, text) {
-                return text === "Display" ? "Close" : "Display";
-            });
+            //$("#display").text(function (i, text) {
+            //    return text === "Display" ? "Close" : "Display";
+            //});
             $("#listResult").html('');
-            $("#listResult").slideToggle("slow");
+            $("#listResult").slideDown('slow');
 
             var displayType = $("#displayType").val();
-            for (var i = 0; i < getMapData().length; i++) {
-                if (getMapData()[i].Type == "Existing") {
+            var md = getMapData();
+            for (var i = 0; i < md.length; i++) {
+                if (md[i].Type == "Existing") {
                     var element = $('    \
     <div id="displayItem" style="vertical-align:middle"> \
-        <div id="bloc1" style="display:inline-table;vertical-align:middle"><img style="width:80px" src="' + getMapData()[i].pic + '"></div>\
-        <div id="bloc2" style="display:inline-table;vertical-align:middle;padding-left:10px;"><p><b>' + getMapData()[i].Title + '</b></p><p>' + getMapData()[i].Description + '</p></div> \
+        <div id="bloc1" style="display:inline-table;vertical-align:middle"><img style="width:80px" src="' + md[i].pic + '"></div>\
+        <div id="bloc2" style="display:inline-table;vertical-align:middle;padding-left:10px;"><p><b>' + md[i].Title + '</b></p><p>' + md[i].Description + '</p></div> \
     </div> \
             ');
                     $("#listResult").append(element);
                 }
             }
+        }
+        function closeList() {
+            $("#listResult").html('');
+            $("#listResult").slideUp("slow");
+           
         }
         // End  function displayList()
 
