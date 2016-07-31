@@ -56,19 +56,19 @@
             box-shadow: 0 1px 1px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.2);
         }
 
-        #searchListDiv .ui-corner-all {
-            border-radius: 0;
-        }
+            #searchListDiv .ui-corner-all {
+                border-radius: 0;
+            }
 
-        #searchListDiv .ui-selectmenu-text {
-            font-size: 18px;
-        }
+            #searchListDiv .ui-selectmenu-text {
+                font-size: 18px;
+            }
 
-        #searchListDiv .ui-menu-item {
-            /*width:300px;*/
-            font-size: 18px;
-            padding: 5px;
-        }
+            #searchListDiv .ui-menu-item {
+                /*width:300px;*/
+                font-size: 18px;
+                padding: 5px;
+            }
 
         #display, #close {
             font-size: 18px;
@@ -76,12 +76,12 @@
             background: #d83c3c;
             color: #fff;
             border: none;
-            height:40px;
+            height: 40px;
         }
 
-        #display:hover, #close:hover {
-            background: #e54040;
-        }
+            #display:hover, #close:hover {
+                background: #e54040;
+            }
 
         #displayItem {
             clear: both;
@@ -111,9 +111,9 @@
                 <option value="Grafitti">Grafitti</option>
                 <option value="Artist">Artist</option>
             </select>
-            <button type="button" id="display" onclick="displayList();">Display</button> 
+            <button type="button" id="display" onclick="displayList();">Display</button>
             <button type="button" id="close" onclick="closeList();">&#10006;</button>
-        </div>        
+        </div>
         <div style="padding:20px 20px 0 0;">
             <div id="listResult" style="height:500px; width:350px; overflow:scroll; overflow-x:auto; float:right; display:none ">
 
@@ -123,8 +123,9 @@
 
     <div id="filterDiv">
         <ul style="list-style-type:none; padding:0; margin:0">
-            <li><label><input type="checkbox" id="cbx_existing" checked="checked" />Existing</label></li>
-            <li><label><input type="checkbox" id="cbx_vacant" checked="checked" />Vacant</label></li>
+            <li><label><input type="checkbox" id="cbx_existing" checked="checked" />Gafitti spot</label></li>
+            <li><label><input type="checkbox" id="cbx_vacant" checked="checked" />Vacant spot</label></li>
+            <li><label><input type="checkbox" id="cbx_hotspot" />Hotspot</label></li>
         </ul>
     </div>
     <div id="map"></div>
@@ -132,9 +133,10 @@
 
 
     <script>
-    
+
         var map;
         var markers = [];
+        var infowindow;
 
         $(function () {
             $("#displayType").selectmenu().selectmenu("menuWidget");
@@ -159,7 +161,7 @@
             map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById('filterDiv'));
             map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('sideList'));
 
-            
+
             // Get current location
             // Try HTML5 geolocation.
             if (navigator.geolocation) {
@@ -191,7 +193,7 @@
             var geocoder = new google.maps.Geocoder();
 
             //infowindow for marker information
-            var infowindow = new google.maps.InfoWindow({
+            infowindow = new google.maps.InfoWindow({
                 content: "",
                 maxWidth: 500,
                 Height: 300
@@ -201,24 +203,33 @@
 
             //=====================================================
             // Create marker for each position
-            for (var i = 0; i < getMapData().length; i++) {
-                if (getMapData()[i].Type != "Hotspot")
-                    addMarkerWithTimeout(getMapData()[i], i * 200);
+            //  getMapData().length
+            for (var i = 0; i < pos.length; i++) {
+                //if (pos[i].Type != "Hotspot")
+                addMarkerWithTimeout(pos[i], i * 0);
             }
             function addMarkerWithTimeout(position, timeout) {
                 window.setTimeout(function () {
 
                     var iconSrc = "https://googledrive.com/host/0B9BzW-EySLXrRlJzNm1mMEZGWms/pin";
-                    if (position.Type == "Existing")
+                    var mapOn = map;
+                    if (position.Type == "Existing") {
                         iconSrc += "R.png";
-                    else if (position.Type == "Vacant")
+                    }
+                    else if (position.Type == "Vacant") {
                         iconSrc += "B" + position.Price + ".png";
+                    }
+                    else if (position.Type == "Hotspot") {
+                        iconSrc += "R.png";
+                        mapOn = null;
+                    }
 
                     //Market object
+
                     var marker = new google.maps.Marker({
                         posId: position.id,
                         position: position,
-                        map: map,
+                        map: mapOn,
                         animation: google.maps.Animation.DROP,
                         icon: iconSrc,
                         infoContent: getPopUp(position.id),
@@ -282,6 +293,21 @@
                 }
             });
 
+            document.getElementById('cbx_hotspot').addEventListener('click', function () {
+                if (this.checked) {
+                    for (var i = 0; i < markers.length; i++) {
+                        if (markers[i].avai == "Hotspot")
+                            markers[i].setMap(map);
+                    }
+                }
+                else {
+                    for (var i = 0; i < markers.length; i++) {
+                        if (markers[i].avai == "Hotspot")
+                            markers[i].setMap(null);
+                    }
+                }
+            });
+
             //End Register event
             //===========================
 
@@ -315,26 +341,63 @@
             $("#listResult").slideDown('slow');
 
             var displayType = $("#displayType").val();
-            var md = getMapData();
+            //var md = getMapData();
+            var md;
+            if (displayType == "Grafitti")
+                md = pos;
+            else
+                md = artistAry;
+
             for (var i = 0; i < md.length; i++) {
-                if (md[i].Type == "Existing") {
-                    var element = $('    \
+                var element = "";
+                if (displayType == "Grafitti") {
+                    if (md[i].Type == "Existing" && md[i].current == 1) {
+                        element = $('    \
+<a href="#" onclick="OpenInfowindow('+md[i].id+');"> \
     <div id="displayItem" style="vertical-align:middle"> \
         <div id="bloc1" style="display:inline-table;vertical-align:middle"><img style="width:80px" src="' + md[i].pic + '"></div>\
         <div id="bloc2" style="display:inline-table;vertical-align:middle;padding-left:10px;"><p><b>' + md[i].Title + '</b></p><p>' + md[i].Description + '</p></div> \
     </div> \
+</a>    \
             ');
-                    $("#listResult").append(element);
+                    }
                 }
+                else if (displayType == "Artist") {
+                    element = $('    \
+    <div id="displayItem" style="vertical-align:middle"> \
+        <div id="bloc1" style="display:inline-table;vertical-align:middle"><img style="width:80px" src="' + md[i].pic + '"></div>\
+        <div id="bloc2" style="display:inline-table;vertical-align:middle;padding-left:10px;"> \
+            <p><b>' + md[i].Name + '</b></p> \
+            <p><a href="">' + md[i].ContactEmail + '</a><br/>' +
+              '<a href="">' + md[i].Website + '</a><br/>' +
+            '</p>' +
+            '<p>' + md[i].Description + '</p> \
+        </div> \
+    </div> \
+            ');
+                }
+
+
+                $("#listResult").append(element);
             }
         }
+
         function closeList() {
             $("#listResult").html('');
             $("#listResult").slideUp("slow");
-           
         }
         // End  function displayList()
 
+
+        function OpenInfowindow(posId)
+        {
+            for (i = 0; i < markers.length; i++) {
+                if (markers[i].posId == posId) {
+                    infowindow.setContent(getPopUp(posId));
+                    infowindow.open(map, markers[i]);
+                }
+            }
+        }
 
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGHKPK3FRO_hfimLycjQY62DfWvUHm9U4&callback=initMap"

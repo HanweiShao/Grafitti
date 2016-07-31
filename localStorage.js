@@ -9,11 +9,12 @@ function initializeStorage() {
 }
 
 function getMapData() {
-	initializeStorage();
-	if (localStorage) {
-		return JSON.parse(localStorage.getItem('locations'));
-	}
-	return null;
+	//initializeStorage();
+	//if (localStorage) {
+	//	return JSON.parse(localStorage.getItem('locations'));
+	//}
+    //return null;
+    return pos;
 }
 
 function getPopUp(id) {
