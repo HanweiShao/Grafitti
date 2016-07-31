@@ -1,0 +1,362 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <script src="pos.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="jquery-ui.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+            /*margin: 2% 2% 3% 1%;*/
+            box-shadow: 5px 5px 2px #888888;
+        }
+
+        #filterDiv {
+            margin: 20px 0 0 10px;
+            font-size: larger;
+            padding: 10px 5px;
+            color: dimgray;
+            background: whitesmoke;
+            background: rgba(255,255,255,.8);
+            border-radius: 3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,.7);
+            font: bold 15px 'lucida sans', 'trebuchet MS', 'Tahoma';
+            width: 110px;
+        }
+
+        #listResult {
+            background: whitesmoke;
+            background: rgba(255,255,255,.6);
+            border-radius: 0px;
+            box-shadow: 0 5px 10px rgba(0,0,0,.6);
+        }
+
+        #searchListDiv {
+            margin: 10px 10px 0 0;
+            padding: 7px;
+            background: #444;
+            background: rgba(0,0,0,.2);
+            /*position: absolute;*/
+            /*top: 110px;*/
+            /*right: 20%;*/
+            border-radius: 5px;
+            box-shadow: 0 1px 1px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.2);
+        }
+
+        #searchListDiv .ui-corner-all {
+            border-radius: 0;
+        }
+
+        #searchListDiv .ui-selectmenu-text {
+            font-size: 18px;
+        }
+
+        #searchListDiv .ui-menu-item {
+            /*width:300px;*/
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        #display, #close {
+            font-size: 18px;
+            border-radius: 0;
+            background: #d83c3c;
+            color: #fff;
+            border: none;
+            height:40px;
+        }
+
+        #display:hover, #close:hover {
+            background: #e54040;
+        }
+
+        #displayItem {
+            clear: both;
+            padding: 10px 10px;
+            background: rgba(220,220,220,.6);
+            /*height: 60px;*/
+            margin: 15px;
+            vertical-align: middle;
+            border-radius: 10px 0 0 0;
+            box-shadow: 0 5px 10px rgba(0,0,0,.6);
+        }
+    </style>
+</head>
+<body>
+    <div id="logoDiv" style="height:70px;">
+        <img src="https://googledrive.com/host/0B9BzW-EySLXrRlJzNm1mMEZGWms/logo2.png" />
+    </div>
+
+    <div id="searchDiv" class="form-wrapper cf">
+        <input type="text" id="address" placeholder="Search here..." />
+        <button type="button" id="submit">Search</button>
+    </div>
+
+    <div id="sideList" style="">
+        <div id="searchListDiv" class="">
+            <select id="displayType" style="font-size:14px; ">
+                <option value="Grafitti">Grafitti</option>
+                <option value="Artist">Artist</option>
+            </select>
+            <button type="button" id="display" onclick="displayList();">Display</button> 
+            <button type="button" id="close" onclick="cLoseList();">&#10006;</button>
+        </div>        
+        <div style="padding:20px 20px 0 0;">
+            <div id="listResult" style="height:500px; width:350px; overflow:scroll; overflow-x:auto; float:right; display:none ">
+
+            </div>
+        </div>
+    </div>
+
+    <div id="filterDiv">
+        <ul style="list-style-type:none; padding:0; margin:0">
+            <li><label><input type="checkbox" id="cbx_existing" checked="checked" />Existing</label></li>
+            <li><label><input type="checkbox" id="cbx_vacant" checked="checked" />Vacant</label></li>
+        </ul>
+    </div>
+    <div id="map"></div>
+
+
+
+    <script>
+
+        var map;
+        var markers = [];
+
+        //HTML template for infowindow content
+        var template = ' \
+    <div id="contentTemplate"> \
+        <p><img id="pic" src="" /></p> \
+        <p id="title" style="font-weight:bold"></p> \
+        <p id="description"></p> \
+    </div>        \
+        ';
+
+        $(function () {
+            $("#displayType").selectmenu().selectmenu("menuWidget");
+            $("#display").button();
+            $("#close").button();
+
+        });
+
+        function initMap() {
+            console.log("pos length:" + pos.length);
+
+            //Map object
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: -34.9296194, lng: 138.6078361 },
+                zoom: 16,
+                mapTypeControl: false,
+            });
+
+            //Controls on the map
+            map.controls[google.maps.ControlPosition.TOP_RIGHT].push(document.getElementById('searchDiv'));
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById('logoDiv'));
+            map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById('filterDiv'));
+            map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('sideList'));
+
+
+            // Get current location
+            // Try HTML5 geolocation.
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    map.setCenter(pos);
+
+                    //Current position marker
+                    var marker = new google.maps.Marker({
+                        position: pos,
+                        icon: "Person2.png",
+                        map: map,
+                        title: '',
+                    });
+
+                }, function () {
+                    handleLocationError(true, infoWindow, map.getCenter());
+                });
+            } else {
+                // Browser doesn't support Geolocation
+                handleLocationError(false, infoWindow, map.getCenter());
+            }
+
+            //For search
+            var geocoder = new google.maps.Geocoder();
+
+            //infowindow for marker information
+            var infowindow = new google.maps.InfoWindow({
+                content: "",
+                maxWidth: 500,
+                Height: 300
+            });
+
+            console.log("located");
+
+            //=====================================================
+            // Create marker for each position
+            for (var i = 0; i < pos.length; i++) {
+                if (pos[i].Type != "Hotspot")
+                    addMarkerWithTimeout(pos[i], i * 200);
+            }
+            function addMarkerWithTimeout(position, timeout) {
+                window.setTimeout(function () {
+
+                    //Infowindow content
+                    var contentElement = $(template);
+                    contentElement.find("#pic").attr("src", position.pic);
+                    contentElement.find("#title").text(position.Title);
+                    contentElement.find("#description").text(position.Description);
+
+                    var iconSrc = "https://googledrive.com/host/0B9BzW-EySLXrRlJzNm1mMEZGWms/pin";
+                    if (position.Type == "Existing")
+                        iconSrc += "R.png";
+                    else if (position.Type == "Vacant")
+                        iconSrc += "B" + position.Price + ".png";
+
+                    //Market object
+                    var marker = new google.maps.Marker({
+                        posId: position.id,
+                        position: position,
+                        map: map,
+                        animation: google.maps.Animation.DROP,
+                        icon: iconSrc,
+                        infoContent: contentElement.html(),
+                        avai: position.Type
+                    })
+
+                    //Add to map
+                    markers.push(marker);
+
+                    //Register event listener when clicked.
+                    //Open infowindow using marker.infoContent
+                    google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                        return function () {
+                            infowindow.setContent(marker.infoContent);
+                            infowindow.open(map, marker);
+                        }
+                    })(marker, i));
+                }, timeout);
+            }
+            // End - Create marker for each position
+
+            //====================
+            //Register event
+            //====================
+            //Search location button clicked
+            document.getElementById('submit').addEventListener('click', function () {
+                //searchMarker.setMap(null);
+                geocodeAddress(geocoder, map);
+            });
+
+            //Check/Uncheck existing filter
+            document.getElementById('cbx_existing').addEventListener('click', function () {
+                console.log("cbx_existing clicked");
+                if (this.checked) {
+                    for (var i = 0; i < markers.length; i++) {
+                        if (markers[i].avai == "Existing")
+                            markers[i].setMap(map);
+                    }
+                }
+                else {
+                    for (var i = 0; i < markers.length; i++) {
+                        if (markers[i].avai == "Existing")
+                            markers[i].setMap(null);
+                    }
+                }
+            });
+
+            //Check/uncheck vacant filter
+            document.getElementById('cbx_vacant').addEventListener('click', function () {
+                if (this.checked) {
+                    for (var i = 0; i < markers.length; i++) {
+                        if (markers[i].avai == "Vacant")
+                            markers[i].setMap(map);
+                    }
+                }
+                else {
+                    for (var i = 0; i < markers.length; i++) {
+                        if (markers[i].avai == "Vacant")
+                            markers[i].setMap(null);
+                    }
+                }
+            });
+
+            //End Register event
+            //===========================
+
+
+            var searchMarker;
+            function geocodeAddress(geocoder, resultsMap) {
+                var address = document.getElementById('address').value;
+                geocoder.geocode({ 'address': address }, function (results, status) {
+                    if (status === google.maps.GeocoderStatus.OK) {
+                        resultsMap.setCenter(results[0].geometry.location);
+                        searchMarker = new google.maps.Marker({
+                            map: resultsMap,
+                            position: results[0].geometry.location
+                        });
+                    } else {
+                        alert('Geocode was not successful for the following reason: ' + status);
+                    }
+                });
+            }
+        }
+
+
+
+        //Add items for the left list
+        function displayList() {
+
+            //$("#display").text(function (i, text) {
+            //    return text === "Display" ? "Close" : "Display";
+            //});
+            $("#listResult").html('');
+            $("#listResult").slideDown("slow");
+
+            var displayType = $("#displayType").val();
+            for (var i = 0; i < pos.length; i++) {
+                if (pos[i].Type == "Existing") {
+                    var element = $('    \
+    <div id="displayItem" style="vertical-align:middle"> \
+        <div id="bloc1" style="display:inline-table;vertical-align:middle"><img style="width:80px" src="' + pos[i].pic + '"></div>\
+        <div id="bloc2" style="display:inline-table;vertical-align:middle;padding-left:10px;"><p><b>' + pos[i].Title + '</b></p><p>' + pos[i].Description + '</p></div> \
+    </div> \
+            ');
+                    $("#listResult").append(element);
+                }
+            }
+        }
+
+        function cLoseList()
+        {
+            $("#listResult").html('');
+            $("#listResult").slideUp('slow');
+        }
+        // End  function displayList()
+
+
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGHKPK3FRO_hfimLycjQY62DfWvUHm9U4&callback=initMap"
+            async defer></script>
+    <!--<script src="google-maps-3-vs-1-0.js"></script>-->
+    <!--<script src="google-maps-3-vs-1-0-vsdoc.js"></script>-->
+
+
+</body>
+</html>
